@@ -78,7 +78,12 @@ public class Network {
                             chat.setText(chat.getText().toString() + "\n" + protocol.getUsername() + ": " + protocol.getText() + "\n");
                         }
                         if (protocol.getMode().equals("reg")) {
-                            chat.setText(chat.getText().toString() + "\n" + protocol.getStatusDescription() + "\n");
+                            String status=protocol.getStatus();
+                            String reply=activity.getResources().getString(R.string.auth_status_unknown);
+                            if (status.equals("true")) {reply=activity.getResources().getString(R.string.auth_status_true);}
+                            if (status.equals("false")) {reply=activity.getResources().getString(R.string.auth_status_false);}
+                            if (status.equals("newreg")) {reply=activity.getResources().getString(R.string.auth_status_newreg);}
+                            chat.setText(chat.getText().toString() + "\n" + reply + "\n");
                         }
                         chatScroller.post(new Runnable()
                             {

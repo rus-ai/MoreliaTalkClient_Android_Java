@@ -1,9 +1,7 @@
 package ru.wtw.moreliatalkclient;
 
-
-import java.sql.Timestamp;
-
 public class Protocol {
+
     private String mode;
     private String username;
     private String password;
@@ -33,13 +31,6 @@ public class Protocol {
 
     public String getStatus() {
         return status;
-    }
-
-    public String getStatusDescription() {
-        if (status.equals("true")) return "Авторизация успешна";
-        if (status.equals("false")) return "Авторизация НЕ УСПЕШНА";
-        if (status.equals("newreg")) return "Новая учетная запись зарегистрирована";
-        return "Незвестный ответ от сервера при авторизации";
     }
 
     public void setMode(String mode) {

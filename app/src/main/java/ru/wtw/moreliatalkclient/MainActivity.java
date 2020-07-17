@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -37,6 +38,16 @@ public class MainActivity extends AppCompatActivity  {
     protected void onStart() {
         super.onStart();
         ImageButton sendButton = findViewById(R.id.sendButton);
+        final TextView chat = ((TextView) findViewById(R.id.chat));
+        final ScrollView chatScroller = findViewById(R.id.chatScroller);
+        chatScroller.post(new Runnable()
+        {
+            public void run()
+            {
+                chatScroller.smoothScrollTo(0, chat.getBottom());
+            }
+        });
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
