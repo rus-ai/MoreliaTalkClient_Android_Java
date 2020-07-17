@@ -5,14 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 
-
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     private Network network;
     public boolean isConnected;
 
@@ -32,6 +32,25 @@ public class MainActivity extends AppCompatActivity  {
             network.setServername(extras.getString("servername"));
             network.connect();
         }
+        EditText editSend = findViewById(R.id.editSend);
+
+        final View activityRootView = findViewById(R.id.ActivityLayout);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > 100) {
+                    final TextView chat = ((TextView) findViewById(R.id.chat));
+                    final ScrollView chatScroller = findViewById(R.id.chatScroller);
+                    chatScroller.post(new Runnable()
+                    {
+                        public void run()
+                        {
+                            chatScroller.smoothScrollTo(0, chat.getBottom());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -62,5 +81,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
     }
+
 
 }
