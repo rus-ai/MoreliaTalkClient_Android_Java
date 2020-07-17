@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
         isConnected=false;
         network = new Network(MainActivity.this);
+        TextView chat = findViewById(R.id.chat);
+        chat.setText("");
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             Log.i("SERVER","Extra");
@@ -34,16 +36,16 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onStart() {
         super.onStart();
-        TextView chat = findViewById(R.id.chat);
-        chat.setText("");
         ImageButton sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (network.isConnected()) {
                     EditText editSend = findViewById(R.id.editSend);
-                    String text=editSend.getText().toString();
-                    network.sendMessage(text);
+                    String text=editSend.getText().toString().trim();
+                    if (!text.isEmpty()) {
+                        network.sendMessage(text);
+                    }
                     editSend.setText("");
                 }
             }
