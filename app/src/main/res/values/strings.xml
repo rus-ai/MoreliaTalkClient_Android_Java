@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MoreliaTalkClient</string>
+    <string name="auth">Authorisation</string>
+    <string name="auth_hint">Please enter your username and password</string>
+    <string name="servername">Server</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="cancel">Cancel</string>
+    <string name="default_server">ws://77.50.90.123:8000/ws</string>
+    <string name="default_username">Testuser</string>
+    <string name="default_password">123456</string>
+</resources>
