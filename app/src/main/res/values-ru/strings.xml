@@ -15,5 +15,7 @@
     <string name="auth_status_false">Неправильное имя пользователя или пароль</string>
     <string name="auth_status_newreg">Новая учетная запись зарегистрирована</string>
     <string name="auth_status_unknown">Незвестный ответ от сервера при авторизации</string>
+    <string name="socket_close">Соединение закрыто с кодом:</string>
+    <string name="socket_error">"Ошибка соединения: "</string>
 
 </resources>

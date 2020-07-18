@@ -14,4 +14,6 @@
     <string name="auth_status_false">Wrong username or password</string>
     <string name="auth_status_newreg">New account created</string>
     <string name="auth_status_unknown">Unknown server answer received</string>
+    <string name="socket_close">"Connection closed with code: "</string>
+    <string name="socket_error">Connection error:</string>
 </resources>

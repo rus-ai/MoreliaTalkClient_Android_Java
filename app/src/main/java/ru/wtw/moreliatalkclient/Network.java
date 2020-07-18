@@ -11,6 +11,7 @@ import androidx.core.util.Consumer;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -60,6 +61,7 @@ public class Network {
         }
         socket = new WebSocketClient(socketURI) {
             @Override
+
             public void onOpen(ServerHandshake handshakedata) {
                 isConnected=true;
                 sendAuth();
@@ -67,49 +69,65 @@ public class Network {
             }
 
             @Override
-            public void onMessage(final String message) {
-                final Protocol protocol = new Gson().fromJson(message,Protocol.class);
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        final TextView chat = ((TextView) activity.findViewById(R.id.chat));
-                        final ScrollView chatScroller = activity.findViewById(R.id.chatScroller);
-                        if (protocol.getMode().equals("message")) {
-                            chat.setText(chat.getText().toString() + "\n" + protocol.getUsername() + ": " + protocol.getText() + "\n");
-                        }
-                        if (protocol.getMode().equals("reg")) {
-                            String status=protocol.getStatus();
-                            String reply=activity.getResources().getString(R.string.auth_status_unknown);
-                            if (status.equals("true")) {reply=activity.getResources().getString(R.string.auth_status_true);}
-                            if (status.equals("false")) {reply=activity.getResources().getString(R.string.auth_status_false);}
-                            if (status.equals("newreg")) {reply=activity.getResources().getString(R.string.auth_status_newreg);}
-                            chat.setText(chat.getText().toString() + "\n" + reply + "\n");
-                        }
-                        chatScroller.post(new Runnable()
-                            {
-                                public void run()
-                                {
-                                    chatScroller.smoothScrollTo(0, chat.getBottom());
-                                }
-                            });
-                    }
-                });
-                Log.i("SERVER","Message");
+            public void onMessage(String message) {
+                Protocol protocol = new Gson().fromJson(message,Protocol.class);
+                String status=protocol.getStatus();
+                String reply;
+                if (protocol.getMode().equals("message")) {
+                    reply = protocol.getUsername() + ": " + protocol.getText();
+                    outChat(reply);
+                }
+                if (protocol.getMode().equals("reg")) {
+                    reply = activity.getResources().getString(R.string.auth_status_unknown);
+                    if (status.equals("true"))
+                        reply = activity.getResources().getString(R.string.auth_status_true);
+                    if (status.equals("false"))
+                        reply = activity.getResources().getString(R.string.auth_status_false);
+                    if (status.equals("newreg"))
+                        reply = activity.getResources().getString(R.string.auth_status_newreg);
+                    outChat(reply);
+                }
+                Log.i("SERVER","Message: "+message);
             }
 
             @Override
-            public void onClose(int code, String reason, boolean remote) {
-                Log.i("SERVER","Disconnected");
+            public void onMessage(ByteBuffer message) {
+                Log.i("SERVER","Message byte buffer");
+            }
+
+            @Override
+            public void onClose(final int code, String reason, boolean remote) {
+                Log.i("SERVER","Disconnected with exit code " + code + " additional info: " + reason);
+                outChat(activity.getResources().getString(R.string.socket_close)+code);
             }
 
             @Override
             public void onError(Exception ex) {
-                Log.e("SERVER","Connected", ex);
+                Log.e("SERVER","Error", ex);
+                outChat(activity.getResources().getString(R.string.socket_error)+ex.getMessage().toString());
             }
         };
         Log.i("SERVER","Connect");
         socket.connect();
 
+    }
+
+    public void outChat (final String text) {
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                final TextView chat = ((TextView) activity.findViewById(R.id.chat));
+                final ScrollView chatScroller = activity.findViewById(R.id.chatScroller);
+                chat.setText(chat.getText().toString() + "\n" + text + "\n");
+                chatScroller.post(new Runnable()
+                {
+                    public void run()
+                    {
+                        chatScroller.smoothScrollTo(0, chat.getBottom());
+                    }
+                });
+            }
+        });
     }
 
     public void sendAuth () {
@@ -120,6 +138,7 @@ public class Network {
         protocol.setPassword(password);
         String json = gson.toJson(protocol);
         if (socket != null && socket.isOpen()) {
+            Log.i("SERVER","Send auth");
             socket.send(json);
         }
     }
@@ -132,6 +151,8 @@ public class Network {
         protocol.setText(text);
         String json = gson.toJson(protocol);
         if (socket != null && socket.isOpen()) {
+            Log.i("SERVER","Send text");
+            Log.i("SERVER",json);
             socket.send(json);
         }
     }
